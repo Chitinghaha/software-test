@@ -1,4 +1,4 @@
-name: Python CI
+name: Python CI with Coverage & Static Analysis
 
 on:
   push:
@@ -12,11 +12,21 @@ jobs:
 
     steps:
     - uses: actions/checkout@v3
+
     - name: Set up Python
       uses: actions/setup-python@v4
       with:
         python-version: 3.11
+
     - name: Install dependencies
-      run: pip install pytest
-    - name: Run tests
-      run: pytest CalcTest.py
+      run: |
+        pip install pytest coverage flake8
+
+    - name: Run static analysis (flake8)
+      run: flake8 .
+
+    - name: Run tests with coverage
+      run: |
+        coverage run --branch -m pytest CalcTest.py
+        coverage report -m
+        coverage xml
